@@ -2,9 +2,16 @@
   "username": "YOUR USERNAME",
   "password": "YOUR PASSWORD",
   "hashtags": [
-    "love", "instagood", "me", "photooftheday", "instamood", "instadaily", "summer", "smile", "pretty", "food",
-    "funny", "beach", "bored", "life", "cool", "art", "sunset", "family", "followback"
+    "mainananak",
+    "mainancowok",
+    "mainananakcowok",
+    "mainanedukatif"
   ],
+  "filter": {
+    "blacklist": ["shop", "grosir"],
+    "likeBlacklist": [],
+    "followBlacklist": []
+  },
   "settings": {
     "run_every_x_hours": 1,
     "like_ratio": 0.75,
