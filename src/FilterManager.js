@@ -14,6 +14,7 @@ const BLACKLIST_TYPE = {
 console.log('blacklist => ', blacklist);
 console.log('followBlacklist => ', followBlacklist);
 console.log('likeBlacklist => ', likeBlacklist);
+console.log('----------------------------------\n\n');
 
 function isNotAbleToFollow(list, username) {
   return list.some(blacklist => username.toLowerCase().includes(blacklist));
