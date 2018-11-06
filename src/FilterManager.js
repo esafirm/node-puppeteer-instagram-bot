@@ -1,9 +1,6 @@
 let config = require('../config/config.json');
 
-const filter = config.filter;
-const blacklist = filter.blacklist;
-const followBlacklist = filter.followBlacklist;
-const likeBlacklist = filter.likeBlacklist;
+const { blacklist, followBlacklist, likeBlacklist } = config.filter;
 
 const BLACKLIST_TYPE = {
   ALL: 'ALL',
