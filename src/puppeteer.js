@@ -5,7 +5,7 @@ let ops = require('../src/pouchDB');
 let config = require('../config/config.json');
 
 const { type, isBlacklisted } = require('./FilterManager');
-const instagramDriver = require('./InstagramDriver');
+const driver = require('./InstagramDriver');
 
 let run = async function() {
   // set up Puppeteer
@@ -18,10 +18,10 @@ let run = async function() {
   page.setViewport({ width: 1200, height: 764 });
 
   // Load Instagram
-  await instagramDriver.goToLoginPage(page);
+  await driver.goToLoginPage(page);
 
   // Login
-  await instagramDriver.login(page);
+  await driver.login(page);
 
   // Loop through shuffled hashtags
   let hashtags = shuffle(config.hashtags);
@@ -54,23 +54,15 @@ let run = async function() {
 
         // Get post info
         let hasEmptyHeart = await page.$(config.selectors.post_heart_grey);
-
-        let username = await page.evaluate(x => {
-          let element = document.querySelector(x);
-          return Promise.resolve(element ? element.innerHTML : '');
-        }, config.selectors.post_username);
-
-        let followStatus = await page.evaluate(x => {
-          let element = document.querySelector(x);
-          return Promise.resolve(element ? element.innerHTML : '');
-        }, config.selectors.post_follow_link);
+        let username = await driver.getUsername(page);
+        let followStatus = await driver.getFollowStatus(page);
 
         console.log('---> Evaluate post from ' + username);
 
         let blacklisted = isBlacklisted(type.ALL, username);
         if (blacklisted) {
           console.log(`X-- ${username} blacklisted for ALL`);
-          await instagramDriver.closePost(page);
+          await driver.closePost(page);
           continue;
         }
 
@@ -87,9 +79,8 @@ let run = async function() {
           hasEmptyHeart !== null &&
           Math.random() < config.settings.like_ratio
         ) {
-          await page.click(config.selectors.post_like_button);
           console.log('---> like for ' + username);
-          await page.waitFor(10000 + Math.floor(Math.random() * 5000));
+          await driver.likePost(page);
         }
 
         // Decide to follow user
@@ -125,7 +116,7 @@ let run = async function() {
         }
 
         // Close post
-        await instagramDriver.closePost(page);
+        await driver.closePost(page);
       }
     }
   }
