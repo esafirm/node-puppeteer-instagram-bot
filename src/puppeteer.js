@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 const shuffle = require('shuffle-array');
 
-let ops = require('../src/pouchDB');
+let db = require('../src/pouchDB');
 let config = require('../config/config.json');
 
 const { type, isBlacklisted } = require('./FilterManager');
@@ -85,7 +85,7 @@ let run = async function() {
 
         // Decide to follow user
         let isArchivedUser;
-        await ops
+        await db
           .inArchive(username)
           .then(() => (isArchivedUser = true))
           .catch(() => (isArchivedUser = false));
@@ -101,7 +101,7 @@ let run = async function() {
           !cannotFollow &&
           Math.random() < config.settings.follow_ratio
         ) {
-          await ops
+          await db
             .addFollow(username)
             .then(() => {
               return page.click(config.selectors.post_follow_link);
@@ -125,7 +125,7 @@ let run = async function() {
   if (config.settings.do_unfollows) {
     let cutoff =
       new Date().getTime() - config.settings.unfollow_after_days * 86400000;
-    let follows = await ops.getFollows();
+    let follows = await db.getFollows();
     let unfollows = [];
 
     follows.rows.forEach(user => {
@@ -136,24 +136,20 @@ let run = async function() {
 
     for (let n = 0; n < unfollows.length; n++) {
       let user = unfollows[n];
-      await page.goto('https://www.instagram.com/' + user + '/?hl=en');
-      await page.waitFor(1500 + Math.floor(Math.random() * 500));
+      await driver.goToUserPage(page, user);
 
-      let followStatus = await page.evaluate(x => {
-        let element = document.querySelector(x);
-        return Promise.resolve(element ? element.innerHTML : '');
-      }, config.selectors.user_unfollow_button);
+      let followStatus = await driver.getFollowStatus(page);
 
       if (followStatus === 'Following') {
         console.log('---> unfollow ' + user);
         await page.click(config.selectors.user_unfollow_button);
         await page.waitFor(750);
         await page.click(config.selectors.user_unfollow_confirm_button);
-        ops.unFollow(user);
+        db.unFollow(user);
         await page.waitFor(15000 + Math.floor(Math.random() * 5000));
       } else {
         console.log('---> archive ' + user);
-        ops.unFollow(user);
+        db.unFollow(user);
       }
     }
   }

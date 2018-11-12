@@ -34,8 +34,8 @@ exports.getUsername = async page => {
 
 // Get follow status from user profile
 exports.getFollowStatus = async page => {
-  return await page.evaluate(x => {
-    let element = document.querySelector(x);
+  return await page.evaluate(qSelector => {
+    let element = document.querySelector(qSelector);
     return Promise.resolve(element ? element.innerHTML : '');
   }, config.selectors.post_follow_link);
 };
@@ -44,4 +44,10 @@ exports.getFollowStatus = async page => {
 exports.likePost = async page => {
   await page.click(config.selectors.post_like_button);
   await page.waitFor(10000 + Math.floor(Math.random() * 5000));
+};
+
+// Go to Instagram user page
+exports.goToUserPage = async (page, user) => {
+  await page.goto('https://www.instagram.com/' + user + '/?hl=en');
+  await page.waitFor(1500 + Math.floor(Math.random() * 500));
 };
