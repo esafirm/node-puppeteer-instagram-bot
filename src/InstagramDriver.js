@@ -8,6 +8,13 @@ exports.goToLoginPage = async page => {
   await page.waitFor(2500);
 };
 
+// Go to Hashtag page
+exports.goToHashtagPage = async (page, hashtag) => {
+  page.goto(
+    'https://www.instagram.com/explore/tags/' + hashtag + '/?hl=en'
+  );
+};
+
 exports.login = async page => {
   await page.click(config.selectors.username_field);
   await page.keyboard.type(config.username);

@@ -28,9 +28,8 @@ let run = async function() {
 
   for (let hl = 0; hl < hashtags.length; hl++) {
     // Search for hashtags
-    await page.goto(
-      'https://www.instagram.com/explore/tags/' + hashtags[hl] + '/?hl=en'
-    );
+    let currentTag = hashtags[hl];
+    await driver.goToHashtagPage(page, currentTag);
     console.log('===> hashtag search: ' + hashtags[hl]);
 
     // Loop through the latest 9 posts
