@@ -1,4 +1,5 @@
 const program = require('commander');
+const colors = require('colors');
 
 program.command('follow <username>').action((dir, _) => {
   console.log(dir);
@@ -16,12 +17,12 @@ program.command('auto').action((dir, _) => {
 program.command('stat').action((dir, _) => {
   const db = require('./src/pouchDB');
   db.getFollows().then(docs => {
-    console.log('Follower registerd: ', docs.total_rows);
+    console.log('➡️  Follower registerd: ', colors.green(docs.total_rows));
   });
 });
 
 program.command('unfollow').action((dir, _) => {
-  console.log('on development!');
+  console.log(colors.red('on development!'));
 });
 
 program.parse(process.argv);
