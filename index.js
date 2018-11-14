@@ -13,4 +13,15 @@ program.command('auto').action((dir, _) => {
   setInterval(bot, cnf.settings.run_every_x_hours * 3600000);
 });
 
+program.command('stat').action((dir, _) => {
+  const db = require('./src/pouchDB');
+  db.getFollows().then(docs => {
+    console.log('Follower registerd: ', docs.total_rows);
+  });
+});
+
+program.command('unfollow').action((dir, _) => {
+  console.log('on development!');
+});
+
 program.parse(process.argv);
