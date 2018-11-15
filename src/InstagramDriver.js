@@ -1,5 +1,17 @@
 const config = require('../config/config.json');
 
+exports.createPage = async () => {
+  const puppeteer = require('puppeteer');
+  const browser = await puppeteer.launch({
+    headless: config.settings.headless,
+    args: ['--no-sandbox']
+  });
+
+  const page = await browser.newPage();
+  page.setViewport({ width: 1200, height: 764 });
+  return page;
+};
+
 exports.goToLoginPage = async page => {
   // Load Instagram
   await page.goto('https://www.instagram.com');
@@ -10,9 +22,7 @@ exports.goToLoginPage = async page => {
 
 // Go to Hashtag page
 exports.goToHashtagPage = async (page, hashtag) => {
-  page.goto(
-    'https://www.instagram.com/explore/tags/' + hashtag + '/?hl=en'
-  );
+  page.goto('https://www.instagram.com/explore/tags/' + hashtag + '/?hl=en');
 };
 
 exports.login = async page => {
@@ -40,12 +50,14 @@ exports.getUsername = async page => {
 };
 
 // Get follow status from user profile
-exports.getFollowStatus = async page => {
+async function getFollowStatus(page) {
   return await page.evaluate(qSelector => {
     let element = document.querySelector(qSelector);
     return Promise.resolve(element ? element.innerHTML : '');
   }, config.selectors.post_follow_link);
-};
+}
+
+exports.getFollowStatus = getFollowStatus;
 
 // Like post
 exports.likePost = async page => {
@@ -57,4 +69,16 @@ exports.likePost = async page => {
 exports.goToUserPage = async (page, user) => {
   await page.goto('https://www.instagram.com/' + user + '/?hl=en');
   await page.waitFor(1500 + Math.floor(Math.random() * 500));
+};
+
+// Unfollow user and notify if we success
+exports.unfollow = async (page, user) => {
+  let followStatus = await getFollowStatus(page);
+
+  if (followStatus === 'Following') {
+    await page.click(config.selectors.user_unfollow_button);
+    await page.waitFor(750);
+    await page.click(config.selectors.user_unfollow_confirm_button);
+    await page.waitFor(15000 + Math.floor(Math.random() * 5000));
+  }
 };

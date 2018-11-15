@@ -22,7 +22,8 @@ program.command('stat').action((dir, _) => {
 });
 
 program.command('unfollow').action((dir, _) => {
-  console.log(colors.red('on development!'));
+  const unfollowers = require('./src/Unfollowers');
+  unfollowers.unfollow(false);
 });
 
 program.parse(process.argv);

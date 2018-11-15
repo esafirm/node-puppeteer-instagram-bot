@@ -3,19 +3,14 @@ const shuffle = require('shuffle-array');
 
 let db = require('../src/pouchDB');
 let config = require('../config/config.json');
+const unfollowers = require('../src/Unfollowers');
 
 const { type, isBlacklisted } = require('./FilterManager');
 const driver = require('./InstagramDriver');
 
 let run = async function() {
   // set up Puppeteer
-  const browser = await puppeteer.launch({
-    headless: config.settings.headless,
-    args: ['--no-sandbox']
-  });
-
-  const page = await browser.newPage();
-  page.setViewport({ width: 1200, height: 764 });
+  const page = await driver.createPage();
 
   // Load Instagram
   await driver.goToLoginPage(page);
@@ -122,35 +117,7 @@ let run = async function() {
 
   // Unfollows
   if (config.settings.do_unfollows) {
-    let cutoff =
-      new Date().getTime() - config.settings.unfollow_after_days * 86400000;
-    let follows = await db.getFollows();
-    let unfollows = [];
-
-    follows.rows.forEach(user => {
-      if (user.doc.added < cutoff) {
-        unfollows.push(user.doc._id);
-      }
-    });
-
-    for (let n = 0; n < unfollows.length; n++) {
-      let user = unfollows[n];
-      await driver.goToUserPage(page, user);
-
-      let followStatus = await driver.getFollowStatus(page);
-
-      if (followStatus === 'Following') {
-        console.log('---> unfollow ' + user);
-        await page.click(config.selectors.user_unfollow_button);
-        await page.waitFor(750);
-        await page.click(config.selectors.user_unfollow_confirm_button);
-        db.unFollow(user);
-        await page.waitFor(15000 + Math.floor(Math.random() * 5000));
-      } else {
-        console.log('---> archive ' + user);
-        db.unFollow(user);
-      }
-    }
+    unfollowers.unfollow(true);
   }
 
   // Close browser
