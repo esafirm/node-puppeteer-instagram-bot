@@ -1,6 +1,6 @@
 const config = require('../config/config.json');
 
-exports.createPage = async () => {
+exports.create = async () => {
   const puppeteer = require('puppeteer');
   const browser = await puppeteer.launch({
     headless: config.settings.headless,
@@ -9,7 +9,7 @@ exports.createPage = async () => {
 
   const page = await browser.newPage();
   page.setViewport({ width: 1200, height: 764 });
-  return page;
+  return { browser, page };
 };
 
 exports.goToLoginPage = async page => {
@@ -72,7 +72,7 @@ exports.goToUserPage = async (page, user) => {
 };
 
 // Unfollow user and notify if we success
-exports.unfollow = async (page, user) => {
+exports.unfollow = async page => {
   let followStatus = await getFollowStatus(page);
 
   if (followStatus === 'Following') {
@@ -80,5 +80,8 @@ exports.unfollow = async (page, user) => {
     await page.waitFor(750);
     await page.click(config.selectors.user_unfollow_confirm_button);
     await page.waitFor(15000 + Math.floor(Math.random() * 5000));
+    return true;
+  } else {
+    return false;
   }
 };

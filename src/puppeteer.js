@@ -10,7 +10,7 @@ const driver = require('./InstagramDriver');
 
 let run = async function() {
   // set up Puppeteer
-  const page = await driver.createPage();
+  const { browser, page } = await driver.create();
 
   // Load Instagram
   await driver.goToLoginPage(page);

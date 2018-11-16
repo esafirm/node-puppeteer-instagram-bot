@@ -7,7 +7,7 @@ const colors = require('colors');
 
 // Currently timed means it invoked after login
 async function unfollow(timed) {
-  const page = await driver.createPage();
+  const { page } = await driver.create();
 
   if (!timed) {
     // Load Instagram
@@ -33,11 +33,16 @@ async function unfollow(timed) {
   for (let n = 0; n < unfollows.length; n++) {
     let user = unfollows[n];
     await driver.goToUserPage(page, user);
-    await driver.unfollow(page, user);
+    let isSuccess = await driver.unfollow(page);
+
+    if (isSuccess) {
+      console.log('---> unfollow ' + user);
+    } else {
+      console.log('---X unfollow fail, maybe already unfollowed');
+    }
 
     db.unFollow(user);
 
-    console.log('---> unfollow ' + user);
     console.log('---> archive ' + user);
   }
 }
