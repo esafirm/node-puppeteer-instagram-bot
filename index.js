@@ -69,6 +69,7 @@ program.command('unfollow').action((dir, _) => {
 if (IS_DEBUG) {
   program.command('debug [type]', 'Run debug command').action(name => {
     const actualName = name.trim().toLowerCase();
+    console.log('Running debug command:', actualName);
   });
 }
 
