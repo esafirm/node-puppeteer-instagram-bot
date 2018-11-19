@@ -1,7 +1,9 @@
-let PouchDB = require('pouchdb');
+const PouchDB = require('pouchdb');
 
-let db = new PouchDB('follows');
-let db_archive = new PouchDB('followsArchive');
+const db = new PouchDB('follows');
+const db_archive = new PouchDB('followsArchive');
+
+const config = require('../config/config.json');
 
 let addFollow = async function(username) {
   return db.put(
@@ -31,7 +33,11 @@ let unFollow = async function(username) {
 };
 
 let inArchive = async function(username) {
-  return db_archive.get(username);
+  return db_archive.get(username).catch(e => {
+    if (config.debug) {
+      console.log('error', es);
+    }
+  });
 };
 
 let getArchives = async () => {

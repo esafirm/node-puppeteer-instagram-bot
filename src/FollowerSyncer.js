@@ -18,7 +18,6 @@ exports.sync = async () => {
   // Collect usernames
   console.log(colors.green('Collecting usernames…'));
   await page.waitFor(2000);
-  await page.on('console', msg => console.log('PAGE LOG:', msg.text()));
   const usernames = await page.evaluate(selector => {
     let htmlCollections = document.getElementsByClassName(selector);
     let arr = Array.from(htmlCollections);

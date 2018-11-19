@@ -9,6 +9,11 @@ exports.create = async viewPortConfig => {
 
   const page = await browser.newPage();
   page.setViewport(viewPortConfig || { width: 1200, height: 764 });
+
+  if (config.debug) {
+    page.on('console', msg => console.log('PAGE LOG:', msg.text()));
+  }
+
   return { browser, page };
 };
 
@@ -84,6 +89,7 @@ exports.goToFollowersPage = async (page, user) => {
 exports.unfollow = async page => {
   let followStatus = await getFollowStatus(page);
 
+  console.log('follow status', followStatus);
   if (followStatus === 'Following') {
     await page.click(config.selectors.user_unfollow_button);
     await page.waitFor(750);
