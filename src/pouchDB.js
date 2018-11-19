@@ -4,7 +4,10 @@ let db = new PouchDB('follows');
 let db_archive = new PouchDB('followsArchive');
 
 let addFollow = async function(username) {
-  return db.put({ _id: username, added: new Date().getTime() });
+  return db.put(
+    { _id: username, added: new Date().getTime() },
+    { force: true }
+  );
 };
 
 let getFollows = async function() {
