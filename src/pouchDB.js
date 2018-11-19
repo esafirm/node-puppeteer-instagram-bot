@@ -31,7 +31,12 @@ let inArchive = async function(username) {
   return db_archive.get(username);
 };
 
-module.exports.addFollow = addFollow;
-module.exports.inArchive = inArchive;
-module.exports.getFollows = getFollows;
-module.exports.unFollow = unFollow;
+let getArchives = async () => {
+  return db_archive.allDocs({ include_docs: true });
+};
+
+exports.addFollow = addFollow;
+exports.getFollows = getFollows;
+exports.unFollow = unFollow;
+exports.inArchive = inArchive;
+exports.getArchives = getArchives;

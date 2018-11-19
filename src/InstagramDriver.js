@@ -1,6 +1,6 @@
 const config = require('../config/config.json');
 
-exports.create = async () => {
+exports.create = async viewPortConfig => {
   const puppeteer = require('puppeteer');
   const browser = await puppeteer.launch({
     headless: config.settings.headless,
@@ -8,7 +8,7 @@ exports.create = async () => {
   });
 
   const page = await browser.newPage();
-  page.setViewport({ width: 1200, height: 764 });
+  page.setViewport(viewPortConfig || { width: 1200, height: 764 });
   return { browser, page };
 };
 
@@ -25,6 +25,7 @@ exports.goToHashtagPage = async (page, hashtag) => {
   page.goto('https://www.instagram.com/explore/tags/' + hashtag + '/?hl=en');
 };
 
+// Actual Login
 exports.login = async page => {
   await page.click(config.selectors.username_field);
   await page.keyboard.type(config.username);
@@ -33,6 +34,14 @@ exports.login = async page => {
 
   await page.click(config.selectors.login_button);
   await page.waitForNavigation();
+};
+
+// Go to Followers Page
+exports.goToUserFollowersPage = async page => {
+  await page.goto(`https://www.instagram.com/${config.username}`);
+  await page.waitFor(2500);
+  await page.click(config.selectors.user_followers_button);
+  await page.waitFor(2500);
 };
 
 exports.closePost = async page => {
@@ -66,7 +75,7 @@ exports.likePost = async page => {
 };
 
 // Go to Instagram user page
-exports.goToUserPage = async (page, user) => {
+exports.goToFollowersPage = async (page, user) => {
   await page.goto('https://www.instagram.com/' + user + '/?hl=en');
   await page.waitFor(1500 + Math.floor(Math.random() * 500));
 };

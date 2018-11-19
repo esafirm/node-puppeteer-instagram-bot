@@ -2,6 +2,9 @@
 
 const program = require('commander');
 const colors = require('colors');
+const config = require('./config/config');
+
+const IS_DEBUG = config.debug;
 
 program.command('follow <username>').action((dir, _) => {
   console.log(dir);
@@ -27,26 +30,46 @@ program
 program
   .command('stat')
   .option('-d, --detail', 'Show stat detail')
-  .action(cmd => {
-    const db = require('./src/pouchDB');
-    db.getFollows().then(docs => {
-      console.log('\n️ ➡ Follower registered: ', colors.green(docs.total_rows));
+  .action(async cmd => {
+    let isDetail = cmd.detail;
 
-      let isDetail = cmd.detail;
-      if (isDetail) {
-        console.log('\n');
-        docs.rows.forEach((r, index) => {
-          console.log(index + 1, r.id);
-        });
-      }
-    });
+    const db = require('./src/pouchDB');
+    let docs = await db.getFollows();
+
+    console.log('\n️ ➡ Follower registered: ', colors.green(docs.total_rows));
+
+    if (isDetail) {
+      console.log('\n');
+      docs.rows.forEach((r, index) => {
+        console.log(index + 1, r.id);
+      });
+    }
+
+    docs = await db.getArchives();
+    console.log('\n️ ➡ In Archives: ', colors.green(docs.total_rows));
+
+    if (isDetail) {
+      console.log('\n');
+      docs.rows.forEach((r, index) => {
+        console.log(index + 1, r.id);
+      });
+    }
   });
 
-program.command('sync').action(() => {});
+program.command('sync').action(() => {
+  const syncer = require('./src/FollowerSyncer');
+  syncer.sync();
+});
 
 program.command('unfollow').action((dir, _) => {
   const unfollowers = require('./src/Unfollowers');
   unfollowers.unfollow(false);
 });
+
+if (IS_DEBUG) {
+  program.command('debug [type]', 'Run debug command').action(name => {
+    const actualName = name.trim().toLowerCase();
+  });
+}
 
 program.parse(process.argv);

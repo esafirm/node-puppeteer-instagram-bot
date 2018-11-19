@@ -32,7 +32,7 @@ async function unfollow(timed) {
 
   for (let n = 0; n < unfollows.length; n++) {
     let user = unfollows[n];
-    await driver.goToUserPage(page, user);
+    await driver.goToFollowersPage(page, user);
     let isSuccess = await driver.unfollow(page);
 
     if (isSuccess) {
