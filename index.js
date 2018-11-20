@@ -6,6 +6,26 @@ const config = require('./config/config');
 
 const IS_DEBUG = config.debug;
 
+if (IS_DEBUG) {
+  program
+    .command('deb')
+    .option('-t, --type <type name>,', 'Debug type')
+    .action(cmd => {
+      if (!cmd.type) {
+        console.log(colors.red('Wrong command'));
+        return;
+      }
+
+      const actualName = cmd.type.trim().toLowerCase();
+      console.log('Running debug command:', actualName);
+      if (actualName == 'clear') {
+        const db = require('./src/pouchDB');
+        db.clearAll();
+        console.log(colors.red('Data cleared!'));
+      }
+    });
+}
+
 program.command('follow <username>').action((dir, _) => {
   console.log(dir);
   console.log('on development!');
@@ -69,12 +89,5 @@ program.command('unfollow').action((dir, _) => {
   const unfollowers = require('./src/Unfollowers');
   unfollowers.unfollow(false);
 });
-
-if (IS_DEBUG) {
-  program.command('debug [type]', 'Run debug command').action(name => {
-    const actualName = name.trim().toLowerCase();
-    console.log('Running debug command:', actualName);
-  });
-}
 
 program.parse(process.argv);

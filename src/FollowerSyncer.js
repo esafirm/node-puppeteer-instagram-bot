@@ -48,5 +48,5 @@ exports.sync = async onlyFollow => {
     }
   });
 
-  // await browser.close();
+  await browser.close();
 };

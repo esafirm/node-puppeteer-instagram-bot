@@ -44,8 +44,27 @@ let getArchives = async () => {
   return db_archive.allDocs({ include_docs: true });
 };
 
+let clearAll = async () => {
+  clearDb(db);
+  clearDb(db_archive);
+};
+
+function clearDb(selectedDb) {
+  selectedDb
+    .allDocs({ include_docs: true })
+    .then(allDocs => {
+      return allDocs.rows.map(row => {
+        return { _id: row.id, _rev: row.doc._rev, _deleted: true };
+      });
+    })
+    .then(deleteDocs => {
+      return selectedDb.bulkDocs(deleteDocs);
+    });
+}
+
 exports.addFollow = addFollow;
 exports.getFollows = getFollows;
 exports.unFollow = unFollow;
 exports.inArchive = inArchive;
 exports.getArchives = getArchives;
+exports.clearAll = clearAll;
