@@ -1,15 +1,8 @@
 {
   "debug": true,
-  "username": "YOUR USERNAME",
-  "password": "YOUR PASSWORD",
-  "hashtags": [
-    "mainananak",
-    "mainancowok",
-    "mainananakcowok",
-    "mainanedukatif",
-    "parentingindonesia",
-    "parentinganak"
-  ],
+  "username": "",
+  "password": "",
+  "hashtags": ["parentingindonesia", "parentinganak"],
   "filter": {
     "blacklist": ["shop", "grosir", "toys"],
     "likeBlacklist": [],
@@ -36,7 +29,7 @@
     "post_close_button": "button.ckWGn",
     "user_unfollow_button": "span > button",
     "user_unfollow_confirm_button": "div.mt3GC > button.aOOlW.-Cab_",
-    "user_followers_button": "a._81NM2",
+    "user_followers_button": "#react-root > section > main > div > ul > li:nth-child(3) > a",
     "user_follower_list_div": "wo9IH"
   }
 }
