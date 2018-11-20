@@ -4,7 +4,7 @@ const config = require('../config/config.json');
 const driver = require('./InstagramDriver');
 const db = require('./pouchDB');
 
-exports.sync = async () => {
+exports.sync = async onlyFollow => {
   const { browser, page } = await driver.create({ width: 411, height: 731 });
 
   // Login
@@ -17,13 +17,21 @@ exports.sync = async () => {
 
   // Collect usernames
   console.log(colors.green('Collecting usernames…'));
-  await page.waitFor(2000);
-  const usernames = await page.evaluate(selector => {
-    let htmlCollections = document.getElementsByClassName(selector);
-    let arr = Array.from(htmlCollections);
-    let filtered = arr.filter(el => el.innerText.includes('Following'));
-    return filtered.map(el => el.innerText.trim().split('\n')[0]);
-  }, config.selectors.user_follower_list_div);
+  await page.waitFor(5000);
+  const usernames = await page.evaluate(
+    ({ selector, onlyFollow }) => {
+      let htmlCollections = document.getElementsByClassName(selector);
+      let arr = Array.from(htmlCollections);
+      let filtered = arr.filter(
+        el => !onlyFollow || !el.innerText.includes('Following')
+      );
+      return filtered.map(el => el.innerText.trim().split('\n')[0]);
+    },
+    {
+      selector: config.selectors.user_follower_list_div,
+      onlyFollow: onlyFollow
+    }
+  );
 
   console.log('usernames to be synced', usernames, usernames.length);
 
@@ -40,5 +48,5 @@ exports.sync = async () => {
     }
   });
 
-  await browser.close();
+  // await browser.close();
 };

@@ -56,10 +56,14 @@ program
     }
   });
 
-program.command('sync').action(() => {
-  const syncer = require('./src/FollowerSyncer');
-  syncer.sync();
-});
+program
+  .command('sync')
+  .option('-of, --only-follow', 'Sync only user that not following you')
+  .action(cmd => {
+    const onlyFollow = cmd.onlyFollow || false;
+    const syncer = require('./src/FollowerSyncer');
+    syncer.sync(onlyFollow);
+  });
 
 program.command('unfollow').action((dir, _) => {
   const unfollowers = require('./src/Unfollowers');
