@@ -1,5 +1,3 @@
-const puppeteer = require('puppeteer');
-
 const driver = require('./InstagramDriver');
 const db = require('./pouchDB');
 const config = require('../config/config');
@@ -30,9 +28,11 @@ async function unfollow(timed) {
     }
   });
 
+  console.log(colors.green(`Unfollow count: ${unfollow.length}`));
+
   for (let n = 0; n < unfollows.length; n++) {
     let user = unfollows[n];
-    await driver.goToFollowersPage(page, user);
+    await driver.goToUserPage(page, user);
     let isSuccess = await driver.unfollow(page);
 
     if (isSuccess) {
@@ -41,7 +41,9 @@ async function unfollow(timed) {
       console.log('---X unfollow fail, maybe already unfollowed');
     }
 
-    db.unFollow(user);
+    db.unFollow(user).catch(e => {
+      console.log('unfollow error', e);
+    });
 
     console.log('---> archive ' + user);
   }

@@ -26,9 +26,9 @@ if (IS_DEBUG) {
     });
 }
 
-program.command('follow <username>').action((dir, _) => {
-  console.log(dir);
-  console.log('on development!');
+program.command('follow <username>').action(username => {
+  const followers = require('./src/Followers');
+  followers.follows(username);
 });
 
 program.command('auto').action((dir, _) => {

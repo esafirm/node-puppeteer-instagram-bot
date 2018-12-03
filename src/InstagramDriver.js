@@ -41,12 +41,28 @@ exports.login = async page => {
   await page.waitForNavigation();
 };
 
-// Go to Followers Page
-exports.goToUserFollowersPage = async page => {
-  await page.goto(`https://www.instagram.com/${config.username}`);
-  await page.waitFor(2500);
+// Go to Followers Page. From: Profile
+exports.goToProfileFollowerPage = async page => {
   await page.click(config.selectors.user_followers_button);
   await page.waitFor(2500);
+};
+
+// Go to Followers Page. From: Profile
+exports.goToProfileFollowingPage = async page => {
+  await page.click(config.selectors.user_followings_button);
+  await page.waitFor(2500);
+};
+
+// Current User Profile -> Follower
+exports.goToUserFollowersPage = async page => {
+  await goToUserPage(page, config.username);
+  await goToProfileFollowerPage(page);
+};
+
+// Current User Profile -> Following
+exports.goToUserFollowingPage = async page => {
+  await goToUserPage(page, config.username);
+  await goToProfileFollowingPage(page);
 };
 
 exports.closePost = async page => {
@@ -80,9 +96,29 @@ exports.likePost = async page => {
 };
 
 // Go to Instagram user page
-exports.goToFollowersPage = async (page, user) => {
-  await page.goto('https://www.instagram.com/' + user + '/?hl=en');
+exports.goToUserPage = async (page, user) => {
+  await page.goto('https://www.instagram.com/' + user);
   await page.waitFor(1500 + Math.floor(Math.random() * 500));
+};
+
+exports.getFollowList = async (page, predicate) => {
+  return await page.evaluate(
+    ({ selector, predicate }) => {
+      let filterFunction = new Function(`return ${predicate}`)();
+
+      let htmlCollections = document.getElementsByClassName(selector);
+      let arr = Array.from(htmlCollections);
+
+      let filtered = arr.filter(el => filterFunction(el));
+      let mapped = filtered.map(el => el.innerText.trim().split('\n')[0]);
+
+      return mapped;
+    },
+    {
+      selector: config.selectors.user_follower_list_div,
+      predicate: predicate.toString()
+    }
+  );
 };
 
 // Unfollow user and notify if we success

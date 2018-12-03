@@ -4,7 +4,15 @@
   "password": "",
   "hashtags": ["parentingindonesia", "parentinganak"],
   "filter": {
-    "blacklist": ["shop", "grosir", "toys"],
+    "blacklist": [
+      "shop",
+      "grosir",
+      "toys",
+      "store",
+      "online",
+      "mobil",
+      "sport"
+    ],
     "likeBlacklist": [],
     "followBlacklist": []
   },
@@ -29,7 +37,8 @@
     "post_close_button": "button.ckWGn",
     "user_unfollow_button": "span > button",
     "user_unfollow_confirm_button": "div.mt3GC > button.aOOlW.-Cab_",
-    "user_followers_button": "#react-root > section > main > div > ul > li:nth-child(3) > a",
+    "user_followers_button": "#react-root > section > main > div > ul > li:nth-child(2) > a",
+    "user_followings_button": "#react-root > section > main > div > ul > li:nth-child(3) > a",
     "user_follower_list_div": "wo9IH"
   }
 }
